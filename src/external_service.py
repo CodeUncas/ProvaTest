@@ -1,3 +1,8 @@
+"""
+Module docstring.
+"""
+
+
 class DatabaseService:
     def get_user_data(self, user_id):
         # Simula una chiamata al database
