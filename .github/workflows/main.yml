@@ -27,7 +27,7 @@ jobs:
 
     - name: Run Pylint
       run: |
-        pylint src/ tests/ --fail-under=0.0
+        pylint src/ tests/ --fail-under=4.0
       continue-on-error: true
 
 
