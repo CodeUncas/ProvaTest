@@ -1,0 +1,30 @@
+name: Pylint Check
+
+on:
+  push:
+    branches:
+      - main  # O qualsiasi altro ramo di tua scelta
+  pull_request:
+    branches:
+      - main  # O qualsiasi altro ramo di tua scelta
+
+jobs:
+  pylint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'  # Sostituisci con la versione di Python che stai usando
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install pylint
+
+    - name: Run Pylint
+      run: |
+        pylint src/  # Sostituisci con il percorso del tuo codice
