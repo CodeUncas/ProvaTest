@@ -1,3 +1,5 @@
+[![Python Tests & Quality Checks](https://github.com/CodeUncas/ProvaTest/actions/workflows/main.yml/badge.svg)](https://github.com/CodeUncas/ProvaTest/actions/workflows/main.yml)
+
 # README.md content
 
 # Python Test Project
