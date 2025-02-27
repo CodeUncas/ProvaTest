@@ -5,9 +5,9 @@ WORKDIR /app
 # Copia i file necessari
 COPY requirements.txt .
 COPY .coveragerc .
-
+RUN mkdir -p app/SimulatePositions
 # Copia il codice sorgente e i test
-COPY ../SimulatePosition ./SimulatePosition
+COPY ../SimulatePositions /app/SimulatePositions
 
 # Installa le dipendenze
 RUN pip install --no-cache-dir -r requirements.txt
