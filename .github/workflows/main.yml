@@ -1,4 +1,4 @@
-name: Python Tests & Quality Checks
+name: Docker Tests & Quality Checks
 
 on:
   push:
@@ -13,23 +13,31 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build and run tests with Docker Compose
+      run: |
+        docker compose --profile test build
+        docker compose --profile test up --abort-on-container-exit
+
+    - name: Copy coverage reports from container
+      run: |
+        container_id=$(docker ps -aq --filter name=test-container)
+        docker cp $container_id:/app/coverage.xml ./coverage.xml
+        docker cp $container_id:/app/htmlcov/. ./reports/htmlcov/
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
       with:
-        python-version: '3.9'
-        cache: 'pip'
+        files: ./coverage.xml
+        fail_ci_if_error: true
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install pylint pytest pytest-cov
-
-    - name: Run Pylint
-      run: |
-        pylint src/ tests/ --fail-under=4.0
-      continue-on-error: true
-
-
-
-
+    - name: Archive code coverage results
+      uses: actions/upload-artifact@v4
+      with:
+        name: code-coverage-report
+        path: reports/htmlcov/
+        retention-days: 14
