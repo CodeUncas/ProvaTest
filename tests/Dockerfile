@@ -7,8 +7,7 @@ COPY requirements.txt .
 COPY .coveragerc .
 
 # Copia il codice sorgente e i test
-COPY SimulatePosition/ ./SimulatePosition
-
+COPY ../SimulatePosition ./SimulatePosition
 
 # Installa le dipendenze
 RUN pip install --no-cache-dir -r requirements.txt
