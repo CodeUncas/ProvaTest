@@ -6,10 +6,12 @@ WORKDIR /app
 COPY tests/requirements.txt .
 COPY .coveragerc .
 RUN mkdir -p app/SimulatePositions
+RUN mkdir -p app/FlinkController
 RUN mkdir -p app/tests
 COPY ./tests /app/tests
 # Copia il codice sorgente e i test
 COPY ./SimulatePositions /app/SimulatePositions
+COPY ./FlinkController /app/FlinkController
 
 # Installa le dipendenze
 RUN pip install --no-cache-dir -r requirements.txt
@@ -18,7 +20,7 @@ RUN pip install pytest pytest-cov coveralls
 # Crea directory per i report
 
 # Esegue i test con coverage
-CMD ["pytest", "--cov=./", "--cov-report=xml:coverage.xml", "tests/", "--cov-config=.coveragerc"]
+CMD ["pytest", "--cov=SimulatePositions","--cov=FlinkController", "--cov-report=xml:coverage.xml", "tests/", "--cov-config=.coveragerc"]
 
 
 # # Costruisci l'immagine
