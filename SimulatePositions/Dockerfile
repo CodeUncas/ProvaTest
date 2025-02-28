@@ -4,6 +4,8 @@ FROM python:3.8
 RUN apt-get update && apt-get install -y \
   gdal-bin \
   libgdal-dev \
+  build-essential \
+  librdkafka-dev \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Imposta le variabili di ambiente per GDAL
