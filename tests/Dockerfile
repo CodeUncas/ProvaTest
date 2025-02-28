@@ -16,14 +16,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install pytest pytest-cov
 
 # Crea directory per i report
-RUN mkdir -p /app/reports
-RUN chmod -R 777 /app/reports
-
-# Definizione dei volumi per persistere i report
-VOLUME ["/app/reports"]
 
 # Esegue i test con coverage
-CMD ["pytest", "--cov=SimulatePositions", "--cov-report=xml:coverage.xml","--cov-report=html:/app/reports/htmlcov", "tests/", "--cov-config=.coveragerc"]
+CMD ["pytest", "--cov=SimulatePositions", "--cov-report=xml:coverage.xml", "tests/", "--cov-config=.coveragerc"]
 
 
 # # Costruisci l'immagine

@@ -23,7 +23,6 @@ jobs:
 
     - name: Prepare coverage directory
       run: |
-        mkdir -p ./reports/htmlcov
         mkdir -p ./coverage
 
     - name: Copy coverage reports from container
@@ -32,8 +31,6 @@ jobs:
         container_id=$(docker ps -a -q --filter "name=.*test.*" --latest)
         if [ -n "$container_id" ]; then
           echo "Copying coverage from container $container_id"
-          docker cp $container_id:/app/htmlcov/. ./reports/htmlcov/ || echo "Failed to copy HTML coverage reports"
-          docker cp $container_id:/app/.coverage ./coverage/.coverage || echo "Failed to copy .coverage file"
           docker cp $container_id:/app/coverage.xml ./coverage/coverage.xml || echo "Failed to copy coverage.xml file"
           # Rimuovi manualmente il container dopo la copia
           docker rm $container_id

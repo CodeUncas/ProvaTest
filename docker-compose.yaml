@@ -130,8 +130,6 @@ services:
     build: 
       context: ./
       dockerfile: tests/Dockerfile
-    volumes:
-      - ./reports:/app/reports
     depends_on:
       kafka:
         condition: service_healthy
