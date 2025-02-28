@@ -24,6 +24,7 @@ jobs:
     - name: Prepare coverage directory
       run: |
         mkdir -p ./reports/htmlcov
+        mkdir -p ./coverage
 
     - name: Copy coverage reports from container
       run: |
@@ -31,13 +32,22 @@ jobs:
         container_id=$(docker ps -a -q --filter "name=.*test.*" --latest)
         if [ -n "$container_id" ]; then
           echo "Copying coverage from container $container_id"
-          docker cp $container_id:/app/htmlcov/. ./reports/htmlcov/ || echo "Failed to copy coverage reports"
+          docker cp $container_id:/app/htmlcov/. ./reports/htmlcov/ || echo "Failed to copy HTML coverage reports"
+          docker cp $container_id:/app/.coverage ./coverage/.coverage || echo "Failed to copy .coverage file"
+          docker cp $container_id:/app/coverage.xml ./coverage/coverage.xml || echo "Failed to copy coverage.xml file"
           # Rimuovi manualmente il container dopo la copia
           docker rm $container_id
         else
           echo "Test container not found!"
           exit 1
         fi
+
+    - name: Upload coverage to Coveralls
+      uses:  codecov/codecov-action@v3
+      with:
+        github-token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage/coverage.xml
+        format: cobertura
 
 
     - name: Archive code coverage results

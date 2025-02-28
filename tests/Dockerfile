@@ -23,7 +23,7 @@ RUN chmod -R 777 /app/reports
 VOLUME ["/app/reports"]
 
 # Esegue i test con coverage
-CMD ["pytest", "--cov=SimulatePositions", "--cov-report=html:/app/reports/htmlcov", "tests/", "--cov-config=.coveragerc"]
+CMD ["pytest", "--cov=SimulatePositions", "--cov-report=xml:coverage.xml","--cov-report=html:/app/reports/htmlcov", "tests/", "--cov-config=.coveragerc"]
 
 
 # # Costruisci l'immagine
