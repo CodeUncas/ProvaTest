@@ -13,7 +13,7 @@ COPY ./SimulatePositions /app/SimulatePositions
 
 # Installa le dipendenze
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install pytest pytest-cov
+RUN pip install pytest pytest-cov coveralls
 
 # Crea directory per i report
 
