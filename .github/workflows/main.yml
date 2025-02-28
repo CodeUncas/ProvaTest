@@ -18,22 +18,13 @@ jobs:
 
     - name: Build and run tests with Docker Compose
       run: |
-        docker compose --profile test build
-        docker compose --profile test up --abort-on-container-exit
+        docker compose --profile test up --build
 
     - name: Copy coverage reports from container
       run: |
-        container_id=$(docker ps -aq --filter name=test-container)
-        docker cp $container_id:/app/coverage.xml ./coverage.xml
+        container_id=$(docker ps -aq --filter name=test)
         docker cp $container_id:/app/htmlcov/. ./reports/htmlcov/
 
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
-      with:
-        files: ./coverage.xml
-        fail_ci_if_error: true
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Archive code coverage results
       uses: actions/upload-artifact@v4
