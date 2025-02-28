@@ -18,7 +18,7 @@ RUN pip install pytest pytest-cov coveralls
 # Crea directory per i report
 
 # Esegue i test con coverage
-CMD ["pytest", "--cov=SimulatePositions", "--cov-report=xml:coverage.xml", "tests/", "--cov-config=.coveragerc"]
+CMD ["pytest", "--cov=./", "--cov-report=xml:coverage.xml", "tests/", "--cov-config=.coveragerc"]
 
 
 # # Costruisci l'immagine
