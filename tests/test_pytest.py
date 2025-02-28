@@ -1,5 +1,5 @@
 import pytest
-from SimulatePositions.provaTest import fakefunc
+from ..SimulatePositions.provaTest import fakefunc
 
 # FILE: SimulatePositions/test_provaTest.py
 
