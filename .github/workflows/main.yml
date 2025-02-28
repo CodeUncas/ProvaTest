@@ -40,9 +40,9 @@ jobs:
         fi
 
     - name: Upload coverage to Coveralls
-      uses:  codecov/codecov-action@v3
+      uses: coverallsapp/github-action@v2
       with:
-        github-token: ${{ secrets.CODECOV_TOKEN }}
+        github-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
         file: ./coverage/coverage.xml
         format: cobertura
 
