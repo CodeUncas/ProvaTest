@@ -19,12 +19,25 @@ jobs:
     - name: Build and run tests with Docker Compose
       run: |
         docker compose --profile test build
-        docker compose --profile test run --rm test
+        docker compose --profile test run test
+
+    - name: Prepare coverage directory
+      run: |
+        mkdir -p ./reports/htmlcov
 
     - name: Copy coverage reports from container
       run: |
-        container_id=$(docker ps -aq --filter name=test)
-        docker cp $container_id:/app/htmlcov/. ./reports/htmlcov/
+        # Cerca anche container fermati (non solo in esecuzione)
+        container_id=$(docker ps -a -q --filter "name=.*test.*" --latest)
+        if [ -n "$container_id" ]; then
+          echo "Copying coverage from container $container_id"
+          docker cp $container_id:/app/htmlcov/. ./reports/htmlcov/ || echo "Failed to copy coverage reports"
+          # Rimuovi manualmente il container dopo la copia
+          docker rm $container_id
+        else
+          echo "Test container not found!"
+          exit 1
+        fi
 
 
     - name: Archive code coverage results
