@@ -21,7 +21,7 @@ RUN pip install pytest pytest-cov coveralls pylint
 # Crea directory per i report
 
 # Esegue i test con coverage
-CMD ["pytest", "--cov=SimulatePositions","--cov=FlinkController", "--cov-report=xml:coverage.xml", "tests/", "--cov-config=.coveragerc","pylint","--rcfile=tests/pylintrc", ".", "> pylint_report.txt"]
+CMD ["pytest", "--cov=SimulatePositions","--cov=FlinkController", "--cov-report=xml:coverage.xml", "tests/", "--cov-config=.coveragerc;","pylint","--rcfile=tests/pylintrc", ".", "> pylint_report.txt"]
 
 
 # # Costruisci l'immagine
