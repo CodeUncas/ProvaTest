@@ -128,7 +128,7 @@ services:
   test:
     container_name: test
     build: 
-      context: .
+      context: ./
       dockerfile: tests/Dockerfile
     volumes:
       - ./reports:/app/reports

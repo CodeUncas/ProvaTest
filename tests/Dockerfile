@@ -3,9 +3,11 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Copia i file necessari
-COPY requirements.txt .
+COPY tests/requirements.txt .
 COPY .coveragerc .
 RUN mkdir -p app/SimulatePositions
+RUN mkdir -p app/tests
+COPY ./tests /app/tests
 # Copia il codice sorgente e i test
 COPY ./SimulatePositions /app/SimulatePositions
 
@@ -21,7 +23,7 @@ RUN chmod -R 777 /app/reports
 VOLUME ["/app/reports"]
 
 # Esegue i test con coverage
-CMD ["pytest", "--cov=SimulatePosition", "--cov-report=html:/app/reports/htmlcov", "tests/", "--cov-config=.coveragerc"]
+CMD ["pytest", "--cov=SimulatePositions", "--cov-report=html:/app/reports/htmlcov", "tests/", "--cov-config=.coveragerc"]
 
 
 # # Costruisci l'immagine

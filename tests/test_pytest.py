@@ -1,112 +1,105 @@
-import unittest
+import sys
+import json
 import pytest
-import inspect
-import math
-from src.external_service import Shape, Circle
+from unittest.mock import patch, Mock, call
+from datetime import datetime
+from confluent_kafka import Producer
 
-# class TestShape(unittest.TestCase):
-#     def test_shape_is_abstract(self):
-#         """Verifica che Shape sia una classe astratta non istanziabile"""
-#         with self.assertRaises(TypeError):
-#             Shape()
+# Mock delle librerie esterne per isolare i test
+@pytest.fixture
+def mock_dependencies():
+    mocks = {
+        'Producer': patch('confluent_kafka.Producer'),
+        'nx': patch('networkx.shortest_path'),
+        'ox': patch('osmnx.graph_from_point'),
+        'time': patch('time.sleep'),
+        'datetime': patch('datetime.datetime')
+    }
+    
+    for name, patcher in mocks.items():
+        mocks[name] = patcher.start()
+    
+    # Configurazione dei mock
+    mocks['Producer'].return_value = Mock()
+    mocks['ox'].return_value = Mock()
+    
+    # Simula il comportamento di datetime.now()
+    mock_now = Mock()
+    mock_now.strftime.return_value = "2025-02-28 10:15:30"
+    mocks['datetime'].now.return_value = mock_now
+    
+    yield mocks
+    
+    # Ferma tutti i mock
+    for patcher in mocks.values():
+        try:
+            patcher.stop()
+        except:
+            pass
+
+@pytest.fixture
+def sample_route():
+    """Genera un percorso di test con coordinate"""
+    return [
+        (45.39, 11.87),  # Punto iniziale
+        (45.395, 11.875),  # Punto intermedio
+        (45.40, 11.88),   # Punto finale
+    ]
+
+def test_generate_positions(mock_dependencies, monkeypatch, sample_route):
+    """Test della funzione generate_positions"""
+    # Configurazione del test
+    mock_producer = mock_dependencies['Producer'].return_value
+    
+    # Import il modulo dopo aver configurato i mock
+    with patch.object(sys, 'modules', sys.modules.copy()):
+        # Importazione isolata per evitare esecuzioni globali
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("simulatePosition", "./simulatePosition.py")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        
+        # Sostituisci la funzione generate_positions per testarla separatamente
+        with patch('builtins.print') as mock_print:
+            # Esegui la funzione di test
+            module.generate_positions(sample_route, 15, 1)  # Usa intervallo=1 per velocizzare il test
             
-# class TestCircle(unittest.TestCase):
-#     def setUp(self):
-#         self.circle = Circle(5)
-        
-#     def test_circle_initialization(self):
-#         """Verifica che Circle venga inizializzato correttamente"""
-#         self.assertEqual(self.circle.radius, 5)
-        
-#     def test_circle_area(self):
-#         """Verifica che il metodo area di Circle funzioni correttamente"""
-#         expected_area = math.pi * 5 ** 2
-#         self.assertAlmostEqual(self.circle.area(), expected_area)
-        
-#     def test_circle_perimeter(self):
-#         """Verifica che il metodo perimeter di Circle funzioni correttamente"""
-#         expected_perimeter = 2 * math.pi * 5
-#         self.assertAlmostEqual(self.circle.perimeter(), expected_perimeter)
-        
-#     def test_circle_with_zero_radius(self):
-#         """Verifica il comportamento con raggio zero"""
-#         circle = Circle(0)
-#         self.assertEqual(circle.area(), 0)
-#         self.assertEqual(circle.perimeter(), 0)
-        
-#     def test_circle_with_negative_radius(self):
-#         """Verifica il comportamento con raggio negativo"""
-#         with self.assertRaises(ValueError):
-#             Circle(-1)
+            # Verifica le chiamate al producer
+            assert mock_producer.produce.call_count > 0
+            assert mock_producer.flush.call_count > 0
+            
+            # Verifica che i dati siano nel formato corretto
+            call_args = mock_producer.produce.call_args_list[0][1]
+            value = json.loads(call_args['value'].decode('utf-8'))
+            
+            # Verifica i campi del messaggio
+            assert 'id' in value
+            assert 'latitude' in value
+            assert 'longitude' in value
+            assert 'received_at' in value
+            
+            # Verifica che le coordinate siano nel range corretto
+            assert 45.39 <= value['latitude'] <= 45.40
+            assert 11.87 <= value['longitude'] <= 11.88
 
-# Implementazione pytest (alternativa)
-def test_circle_pytest():
-    """Test con pytest per Circle"""
-    circle = Circle(10)
-    assert circle.radius == 10
-    assert circle.area() == pytest.approx(math.pi * 100)
-    assert circle.perimeter() == pytest.approx(2 * math.pi * 10)
-
-# def test_circle_implements_shape_interface():
-#     """Verifica che Circle implementi correttamente l'interfaccia Shape"""
-#     # Verifica che Circle sia una sottoclasse di Shape
-#     assert issubclass(Circle, Shape)
+def test_error_handling(mock_dependencies, monkeypatch):
+    """Test della gestione degli errori"""
+    # Configura il producer per generare un'eccezione
+    mock_producer = mock_dependencies['Producer'].return_value
+    mock_producer.produce.side_effect = Exception("Kafka connection error")
     
-#     # Verifica che Circle abbia implementato tutti i metodi astratti
-#     circle = Circle(5)
-    
-#     # Verifica che i metodi dell'interfaccia esistano e siano chiamabili
-#     assert hasattr(circle, "area") and callable(getattr(circle, "area"))
-#     assert hasattr(circle, "perimeter") and callable(getattr(circle, "perimeter"))
-    
-#     # Verifica che i metodi funzionino come previsto
-#     assert circle.area() == pytest.approx(math.pi * 25)
-#     assert circle.perimeter() == pytest.approx(2 * math.pi * 5)
-
-
-
-
-
-# # def test_shape_is_abstract():
-# #     """Verifica che Shape sia una classe astratta"""
-# #     assert inspect.isabstract(Shape)
-
-# def test_shape_abstract_methods():
-#     """Verifica la presenza dei metodi astratti e il loro contenuto"""
-#     # Ottieni i metodi astratti
-#     abstract_methods = {name for name, method in inspect.getmembers(Shape, predicate=inspect.isfunction)
-#                        if getattr(method, '__isabstractmethod__', False)}
-    
-#     # Verifica che ci siano esattamente i metodi area e perimeter
-#     assert abstract_methods == {'area', 'perimeter'}
-    
-#     # Verifica il contenuto dei metodi (che contengono pass)
-#     # Questo è un po' hacky ma funziona per la copertura
-#     area_source = inspect.getsource(Shape.area)
-#     perimeter_source = inspect.getsource(Shape.perimeter)
-    
-#     assert "pass" in area_source
-#     assert "pass" in perimeter_source
-
-# def test_cannot_instantiate_shape():
-#     """Verifica che non si possa istanziare direttamente Shape"""
-#     with pytest.raises(TypeError) as exc_info:
-#         Shape()
-    
-#     # Verifica che l'errore sia dovuto al fatto che Shape è astratta
-#     assert "abstract" in str(exc_info.value).lower()
-
-# def test_concrete_subclass_must_implement_methods():
-#     """Verifica che una sottoclasse concreta debba implementare i metodi"""
-#     # Definisci una classe incompleta che eredita da Shape
-#     class IncompleteShape(Shape):
-#         pass
-    
-#     # Verifica che non si possa istanziare perché mancano i metodi
-#     with pytest.raises(TypeError) as exc_info:
-#         IncompleteShape()
-    
-#     # Verifica che l'errore menzioni i metodi mancanti
-#     error_message = str(exc_info.value).lower()
-#     assert "abstract" in error_message
-#     assert "area" in error_message or "perimeter" in error_message
+    with patch('builtins.print') as mock_print:
+        with patch.object(sys, 'modules', sys.modules.copy()):
+            try:
+                # Import del modulo per forzare l'esecuzione
+                import importlib.util
+                spec = importlib.util.spec_from_file_location("simulatePosition", "./simulatePosition.py")
+                module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(module)
+            except:
+                pass
+            
+            # Verifica che l'errore sia stato catturato e stampato
+            error_message_call = [call for call in mock_print.call_args_list 
+                                 if "Error sending data" in str(call)]
+            assert len(error_message_call) > 0
