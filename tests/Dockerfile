@@ -4,7 +4,7 @@ WORKDIR /app
 
 # Copia i file necessari
 COPY tests/requirements.txt .
-COPY tests/coveragerc .
+COPY tests/.coveragerc .
 COPY tests/pylintrc .
 RUN mkdir -p app/SimulatePositions
 RUN mkdir -p app/FlinkController
