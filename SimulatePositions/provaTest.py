@@ -3,4 +3,4 @@ def fakefunc():
 
 
 def another_fakefunc():
-    return 0
+    return 2
