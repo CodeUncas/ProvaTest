@@ -1,7 +1,7 @@
 import os.path
 import re
 
-def get_pylintScore(file = "pylint_report.txt"):
+def get_pylintScore(file = "tests/pylint_report.txt"):
     content = ""
 
     # Read the pylint output file and raise an error if it does not exist
