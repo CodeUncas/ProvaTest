@@ -13,7 +13,6 @@ COPY ./tests /app/tests
 # Copia il codice sorgente e i test
 COPY ./SimulatePositions /app/SimulatePositions
 COPY ./FlinkController /app/FlinkController
-COPY ./src /app/src
 
 # Installa le dipendenze
 RUN pip install --no-cache-dir -r requirements.txt
@@ -23,7 +22,7 @@ RUN pip install pytest pytest-cov coveralls pylint
 COPY ./__init__.py /app/
 
 # Esegue i test con coverage
-CMD ["sh","-c","pylint --rcfile=pylintrc --output-format=parseable ./src > pylint_report.txt; pytest --cov=SimulatePositions --cov=FlinkController --cov-report=xml:coverage.xml tests/ --cov-config=.coveragerc "]
+CMD ["sh","-c","pylint --rcfile=pylintrc --output-format=parseable . > pylint_report.txt; pytest --cov=SimulatePositions --cov=FlinkController --cov-report=xml:coverage.xml tests/ --cov-config=.coveragerc "]
 
 
 # # Costruisci l'immagine
