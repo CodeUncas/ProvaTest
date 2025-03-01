@@ -1,22 +1,27 @@
 import os.path
 import re
 
-def get_pylintScore(file = "pylint_report.txt"):
-    content = ""
+def get_pylintScore(file_path = "pylint_report.txt"):
+    # Verifica che il file esista
+    if not os.path.isfile(file_path):
+        raise FileNotFoundError(f"Pylint output file not found at {file_path}")
 
-    # Read the pylint output file and raise an error if it does not exist
-    if not os.path.isfile(file):
-        raise FileNotFoundError(f"Pylint output file not found at {file}")
-
-    with open(file, "r", encoding="utf8") as f:
+    # Legge il contenuto del file
+    with open(file_path, "r", encoding="utf8") as f:
         content = f.read()
-        print(content)
+        
+    # Opzionalmente stampa il contenuto per debug
 
-    # Extract the score from the pylint output by looking fo the patter: Your code has been rated at 9.83/10 (previous run: 9.83/10, +0.00)
+    # Estrae il punteggio usando una regex
     pattern = r"(?<=rated at )(\d+\.\d+)"
     match = re.search(pattern, content)
-
-    return match.group(0)
+    
+    # Verifica che il pattern sia stato trovato
+    if not match:
+        raise ValueError(f"Unable to find Pylint score in the file {file_path}")
+    
+    # Restituisce il punteggio come float
+    return float(match.group(1))
 
 
 
