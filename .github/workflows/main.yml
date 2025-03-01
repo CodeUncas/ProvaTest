@@ -46,6 +46,10 @@ jobs:
         file: ./coverage/coverage.xml
         format: cobertura
 
+    - name: List files in directory
+      run: |
+        ls -la
+
     - name: Create Pylint Badge and put in README.md
       uses: actions/setup-python@v5
       with: 
