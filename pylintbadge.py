@@ -36,7 +36,7 @@ def get_color(score):
         return 'yellow'
     if score > 5.0:
         return 'orange'
-    if score > 0.00:
+    if score >= 0.00:
         return 'red'
     return 'bloodred'
 
