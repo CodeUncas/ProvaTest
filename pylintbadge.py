@@ -13,7 +13,7 @@ def get_pylintScore(file_path = "pylint_report.txt"):
     # Opzionalmente stampa il contenuto per debug
 
     # Estrae il punteggio usando una regex
-    pattern = r"(?<=rated at )(\d+\.\d+)"
+    pattern = r"(?<=rated at )(\d+(?:\.\d+)?)"
     match = re.search(pattern, content)
     
     # Verifica che il pattern sia stato trovato
