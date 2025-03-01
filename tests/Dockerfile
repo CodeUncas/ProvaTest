@@ -19,6 +19,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install pytest pytest-cov coveralls pylint
 
 # Crea directory per i report
+COPY ./__init__.py /app/
 
 # Esegue i test con coverage
 CMD ["sh","-c","pylint --rcfile=pylintrc --output-format=parseable . > pylint_report.txt; pytest --cov=SimulatePositions --cov=FlinkController --cov-report=xml:coverage.xml tests/ --cov-config=.coveragerc "]
