@@ -2,6 +2,8 @@
 
 [![Coverage Status](https://coveralls.io/repos/github/CodeUncas/ProvaTest/badge.svg?branch=main)](https://coveralls.io/github/CodeUncas/ProvaTest?branch=main)
 
+![pylint](https://img.shields.io/badge/PyLint-0.0-red?logo=python&logoColor=white)
+
 # README.md content
 
 # Python Test Project
