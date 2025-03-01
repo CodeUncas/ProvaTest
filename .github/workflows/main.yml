@@ -32,6 +32,7 @@ jobs:
         if [ -n "$container_id" ]; then
           echo "Copying coverage from container $container_id"
           docker cp $container_id:/app/coverage.xml ./coverage/coverage.xml || echo "Failed to copy coverage.xml file"
+          docker cp $container_id:/app/pylint_report.txt ./pylint_report.txt || echo "Failed to copy coverage.xml file"
           # Rimuovi manualmente il container dopo la copia
           docker rm $container_id
         else
