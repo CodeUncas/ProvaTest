@@ -13,6 +13,7 @@ COPY ./tests /app/tests
 # Copia il codice sorgente e i test
 COPY ./SimulatePositions /app/SimulatePositions
 COPY ./FlinkController /app/FlinkController
+COPY ./src /app/src
 
 # Installa le dipendenze
 RUN pip install --no-cache-dir -r requirements.txt
