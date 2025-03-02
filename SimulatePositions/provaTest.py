@@ -3,3 +3,6 @@ def fakefunc():
 
 def anotherfakefunc():
     return 2
+
+def ciaio():
+    return 3
