@@ -8,4 +8,4 @@ def test_fakefunc():
     assert fakefunc() == 1
 
 def test_anotherfakefunc():
-    assert anotherfakefunc() == 2
+    assert anotherfakefunc() == 34
